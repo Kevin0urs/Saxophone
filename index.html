@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Application interactive d'apprentissage du saxophone ténor (en Si bémol) et du solfège pour débutant. Entraînement à la lecture de notes, doigtés interactifs et morceaux guidés.">
+  <title>SaxTénor Studio - Apprentissage du Saxophone Ténor & Solfège</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- Header principal -->
+  <header class="app-header">
+    <div class="header-container">
+      <div class="logo-area">
+        <div class="logo-icon">
+          <svg viewBox="0 0 40 40" width="36" height="36" aria-hidden="true">
+            <defs>
+              <linearGradient id="logo-brass" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#FDE68A" />
+                <stop offset="50%" stop-color="#F59E0B" />
+                <stop offset="100%" stop-color="#B45309" />
+              </linearGradient>
+            </defs>
+            <path d="M12 6 C12 4 15 4 15 6 L15 16 C15 22 17 26 21 28 C25 30 29 29 31 25 C32 23 32 21 32 19 L32 17 C32 15 35 15 35 17 L35 20 C35 26 29 33 21 33 C14 33 9 27 9 18 L9 6 Z" fill="url(#logo-brass)" />
+            <circle cx="15" cy="11" r="2.2" fill="#1E293B" />
+            <circle cx="15" cy="16" r="2.2" fill="#1E293B" />
+            <circle cx="15" cy="21" r="2.2" fill="#1E293B" />
+            <circle cx="21" cy="28" r="2" fill="#1E293B" />
+            <path d="M29 17 C29 13 36 10 38 7 L38 21 C36 19 32 18 29 17 Z" fill="url(#logo-brass)" />
+          </svg>
+        </div>
+        <div class="logo-text">
+          <h1>SaxTénor <span>Studio</span></h1>
+          <p class="subtitle">Saxophone Ténor en Si♭ &bull; Méthode Débutant &bull; Hors ligne</p>
+        </div>
+      </div>
+
+      <!-- Contrôles Audio & Réglages rapides -->
+      <div class="header-controls">
+        <div class="audio-control-group">
+          <button id="btn-toggle-sound" class="btn-icon" title="Activer / Couper le son" aria-label="Couper ou activer le son">
+            <span class="icon" id="sound-icon">🔊</span>
+            <span class="btn-text">Son</span>
+          </button>
+          <div class="volume-slider-wrapper" title="Volume">
+            <input type="range" id="sound-volume" min="0" max="1" step="0.05" value="0.7" aria-label="Volume sonore">
+          </div>
+        </div>
+
+        <div class="pitch-mode-group" title="Transposition du synthétiseur">
+          <label for="pitch-mode-select" class="visually-hidden">Mode de hauteur sonore</label>
+          <select id="pitch-mode-select" class="select-styled">
+            <option value="tenor" selected>🎷 Son réel Sax Ténor (Si♭)</option>
+            <option value="concert">🎹 Hauteur écrite (Piano / Ut)</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <!-- Onglets de navigation -->
+    <nav class="main-tabs" aria-label="Navigation principale">
+      <div class="tabs-container">
+        <button class="tab-btn active" data-tab="tab-training" id="tab-btn-training" aria-selected="true" role="tab">
+          <span class="tab-icon">🎯</span>
+          <span class="tab-label">Entraînement</span>
+        </button>
+        <button class="tab-btn" data-tab="tab-songs" id="tab-btn-songs" aria-selected="false" role="tab">
+          <span class="tab-icon">🎶</span>
+          <span class="tab-label">Morceaux Guidés</span>
+        </button>
+        <button class="tab-btn" data-tab="tab-fingering" id="tab-btn-fingering" aria-selected="false" role="tab">
+          <span class="tab-icon">📖</span>
+          <span class="tab-label">Table des Doigtés</span>
+        </button>
+        <button class="tab-btn" data-tab="tab-guide" id="tab-btn-guide" aria-selected="false" role="tab">
+          <span class="tab-icon">💡</span>
+          <span class="tab-label">Guide Débutant</span>
+        </button>
+      </div>
+    </nav>
+  </header>
+
+  <!-- Contenu Principal -->
+  <main class="app-main">
+
+    <!-- ======================================================== -->
+    <!-- ONGLET 1 : ENTRAÎNEMENT (Lecture de notes & Doigtés)       -->
+    <!-- ======================================================== -->
+    <section id="tab-training" class="tab-content active" role="tabpanel" aria-labelledby="tab-btn-training">
+      
+      <!-- Barre d'options de l'entraînement -->
+      <div class="card toolbar-card">
+        <div class="toolbar-grid">
+          
+          <div class="toolbar-item">
+            <label for="practice-range" class="toolbar-label">
+              <span class="toolbar-icon">📏</span> Étendue des notes :
+            </label>
+            <select id="practice-range" class="select-styled">
+              <option value="level1" selected>Niveau 1 : Premières notes (Sol - La - Si - Do - Ré)</option>
+              <option value="level2">Niveau 2 : Registre médium (Do grave à Fa aigu)</option>
+              <option value="level3">Niveau 3 : Premières altérations (Fa#, Si♭, Do#, Mi♭)</option>
+              <option value="level4">Niveau 4 : Registre étendu (Si♭ grave à Fa aigu)</option>
+              <option value="level5">Niveau 5 : Gamme chromatique complète (31 notes)</option>
+            </select>
+          </div>
+
+          <div class="toolbar-item">
+            <label for="practice-mode" class="toolbar-label">
+              <span class="toolbar-icon">🔢</span> Mode d'exercice :
+            </label>
+            <select id="practice-mode" class="select-styled">
+              <option value="single" selected>Note par note (Continu)</option>
+              <option value="series5">Série de 5 notes</option>
+              <option value="series10">Série de 10 notes</option>
+            </select>
+          </div>
+
+          <div class="toolbar-item toolbar-toggle">
+            <label class="switch-label" title="Valide automatiquement dès que vous saisissez le bon doigté">
+              <input type="checkbox" id="auto-validate" checked>
+              <span class="slider round"></span>
+              <span class="switch-text">Validation immédiate</span>
+            </label>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Barre de Score et Statistiques -->
+      <div class="card score-bar">
+        <div class="stat-item">
+          <span class="stat-label">Bonnes réponses</span>
+          <span class="stat-value" id="stat-correct">0</span>
+          <span class="stat-sub" id="stat-total">sur 0</span>
+        </div>
+        <div class="stat-divider"></div>
+        <div class="stat-item">
+          <span class="stat-label">Série en cours</span>
+          <span class="stat-value highlight" id="stat-streak">0 🔥</span>
+          <span class="stat-sub">Record : <span id="stat-best-streak">0</span></span>
+        </div>
+        <div class="stat-divider"></div>
+        <div class="stat-item">
+          <span class="stat-label">Précision</span>
+          <span class="stat-value" id="stat-accuracy">100%</span>
+          <span class="stat-sub">du premier coup</span>
+        </div>
+        <div class="stat-actions">
+          <button id="btn-reset-stats" class="btn-subtle btn-sm" title="Réinitialiser le score de session">
+            ↺ Réinitialiser
+          </button>
+        </div>
+      </div>
+
+      <!-- Zone d'entraînement interactive (2 colonnes) -->
+      <div class="training-layout">
+        
+        <!-- Colonne Gauche : Portée musicale & Question -->
+        <div class="training-left-col">
+          
+          <div class="card challenge-card">
+            
+            <!-- Indicateur de série (quand mode 5 ou 10 notes) -->
+            <div id="series-progress-wrapper" class="series-progress-wrapper hidden">
+              <div class="series-progress-header">
+                <span id="series-counter-text">Note 1 sur 5</span>
+                <span id="series-score-preview">Score de série : 0/0</span>
+              </div>
+              <div class="series-progress-bar-bg">
+                <div id="series-progress-fill" class="series-progress-bar-fill" style="width: 20%;"></div>
+              </div>
+            </div>
+
+            <div class="challenge-header">
+              <h2 class="challenge-title">Quelle est cette note et son doigté ?</h2>
+              <p class="challenge-hint">Observez la portée en clé de sol et fermez les clapets correspondants sur le saxophone.</p>
+            </div>
+
+            <!-- Conteneur SVG de la portée musicale -->
+            <div class="staff-container" id="training-staff-container">
+              <!-- La portée SVG sera dessinée dynamiquement ici -->
+            </div>
+
+            <!-- Aide & Nom de la note (repliable ou affichable) -->
+            <div class="note-reveal-box">
+              <div class="note-name-badge hidden" id="training-note-name">
+                <span class="note-badge-solfege" id="badge-solfege">Sol</span>
+                <span class="note-badge-octave" id="badge-octave">4</span>
+                <span class="note-badge-desc" id="badge-desc">(2ème ligne de la portée)</span>
+              </div>
+              <div class="note-hints-actions">
+                <button id="btn-hint-name" class="btn-subtle btn-sm" title="Afficher le nom de la note pour vous aider">
+                  👁 Indice : Nom de la note
+                </button>
+                <button id="btn-play-note" class="btn-subtle btn-sm" title="Écouter la note au synthétiseur">
+                  🔊 Écouter la note
+                </button>
+              </div>
+            </div>
+
+            <!-- Feedback Box (Affichage du résultat, corrections et explications) -->
+            <div id="feedback-box" class="feedback-box empty">
+              <div class="feedback-icon" id="feedback-icon">👉</div>
+              <div class="feedback-content">
+                <h3 class="feedback-title" id="feedback-title">À vous de jouer !</h3>
+                <p class="feedback-message" id="feedback-message">Cliquez sur les touches du saxophone pour composer le doigté.</p>
+                <div class="feedback-diff" id="feedback-diff"></div>
+              </div>
+            </div>
+
+            <!-- Actions d'exercice -->
+            <div class="challenge-actions">
+              <button id="btn-validate" class="btn btn-primary btn-lg">
+                <span class="btn-icon">✓</span> Valider mon doigté
+              </button>
+              <button id="btn-clear-keys" class="btn btn-secondary">
+                <span class="btn-icon">↺</span> Tout relâcher
+              </button>
+              <button id="btn-reveal-answer" class="btn btn-subtle">
+                <span class="btn-icon">💡</span> Voir la solution
+              </button>
+              <button id="btn-next-note" class="btn btn-accent btn-lg hidden">
+                <span class="btn-icon">➡</span> Note suivante
+              </button>
+            </div>
+
+          </div>
+
+          <!-- Carte Astuce / Clavier -->
+          <div class="card tips-card">
+            <h3>🎹 Raccourcis et astuces</h3>
+            <ul class="tips-list">
+              <li><strong>Espace</strong> : Valider le doigté ou passer à la note suivante.</li>
+              <li><strong>R</strong> : Relâcher toutes les clés.</li>
+              <li><strong>S</strong> : Écouter la note sonore.</li>
+              <li><strong>Main gauche en haut</strong> (touches 1, 2, 3), <strong>Main droite en bas</strong> (touches 4, 5, 6).</li>
+            </ul>
+          </div>
+
+        </div>
+
+        <!-- Colonne Droite : Diagramme interactif du saxophone -->
+        <div class="training-right-col">
+          <div class="card saxophone-card">
+            
+            <div class="sax-card-header">
+              <div class="sax-card-title-group">
+                <h3>Saxophone Ténor</h3>
+                <span class="sax-card-subtitle">Cliquez sur les clés pour les fermer ou les ouvrir</span>
+              </div>
+              <div class="sax-readout-pill" id="sax-current-note-readout" title="Note correspondant aux touches actuellement pressées">
+                Doigté : <strong id="sax-matched-note">Tube ouvert (Do#)</strong>
+              </div>
+            </div>
+
+            <!-- Diagramme SVG Interactif -->
+            <div class="saxophone-diagram-wrapper" id="training-sax-wrapper">
+              <!-- Le SVG du saxophone sera injecté ici -->
+            </div>
+
+            <!-- Liste des clés actuellement pressées -->
+            <div class="sax-active-keys-bar">
+              <span class="active-keys-label">Clés enfoncées :</span>
+              <div class="active-keys-tags" id="active-keys-tags">
+                <span class="key-tag-empty">Aucune clé (tube ouvert)</span>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+
+    </section>
+
+    <!-- ======================================================== -->
+    <!-- ONGLET 2 : MORCEAUX GUIDÉS                               -->
+    <!-- ======================================================== -->
+    <section id="tab-songs" class="tab-content" role="tabpanel" aria-labelledby="tab-btn-songs">
+      
+      <!-- Sélecteur de morceau -->
+      <div class="card songs-selector-card">
+        <div class="songs-header">
+          <div>
+            <h2>Bibliothèque de morceaux pour débutant</h2>
+            <p class="subtitle">Sélectionnez un air connu pour apprendre à le jouer pas à pas au saxophone ténor.</p>
+          </div>
+          <div class="song-filter-badges">
+            <span class="badge badge-accent">Adapté saxophone en Si♭</span>
+            <span class="badge badge-info">Doigtés synchronisés</span>
+          </div>
+        </div>
+
+        <div class="songs-carousel" id="songs-list-container">
+          <!-- Les cartes de morceaux seront insérées dynamiquement ici -->
+        </div>
+      </div>
+
+      <!-- Lecteur & Partition du morceau en cours -->
+      <div class="song-player-grid">
+        
+        <!-- Panneau Partition & Contrôles -->
+        <div class="card song-sheet-card">
+          
+          <div class="song-now-playing-header">
+            <div class="song-title-group">
+              <span class="song-genre-tag" id="current-song-tag">Air traditionnel</span>
+              <h3 id="current-song-title">Au clair de la lune</h3>
+              <p class="song-meta" id="current-song-meta">5 notes &bull; Tonalité adaptée débutant</p>
+            </div>
+            
+            <div class="current-note-spotlight">
+              <span class="spotlight-label">Note active</span>
+              <span class="spotlight-note" id="current-song-note-name">Sol</span>
+              <span class="spotlight-sub" id="current-song-note-pos">Mesure 1 &bull; Note 1/16</span>
+            </div>
+          </div>
+
+          <!-- Portée musicale complète du morceau avec défilement et surbrillance -->
+          <div class="song-staff-viewport">
+            <div class="song-staff-canvas-wrapper" id="song-staff-container">
+              <!-- La partition complète SVG du morceau est dessinée ici -->
+            </div>
+          </div>
+
+          <!-- Barre de contrôle de lecture -->
+          <div class="song-playback-bar">
+            
+            <div class="playback-buttons">
+              <button id="btn-song-first" class="btn btn-secondary btn-icon-only" title="Retour au début" aria-label="Début">
+                ⏮
+              </button>
+              <button id="btn-song-prev" class="btn btn-secondary btn-icon-only" title="Note précédente" aria-label="Précédent">
+                ◀
+              </button>
+              <button id="btn-song-play" class="btn btn-primary" title="Lecture / Pause">
+                <span id="btn-song-play-icon">▶</span> <span id="btn-song-play-text">Lecture automatique</span>
+              </button>
+              <button id="btn-song-next" class="btn btn-secondary btn-icon-only" title="Note suivante" aria-label="Suivant">
+                ▶
+              </button>
+              <button id="btn-song-restart" class="btn btn-secondary btn-icon-only" title="Recommencer" aria-label="Recommencer">
+                🔁
+              </button>
+            </div>
+
+            <!-- Réglage du tempo -->
+            <div class="tempo-control-group">
+              <label for="song-tempo" class="tempo-label">
+                Tempo : <strong id="tempo-display">76 BPM</strong>
+              </label>
+              <input type="range" id="song-tempo" min="40" max="140" step="4" value="76">
+            </div>
+
+            <!-- Mode Défi interactif pour morceaux -->
+            <div class="song-interactive-toggle">
+              <label class="switch-label" title="Le morceau n'avance que lorsque vous faites le bon doigté sur le saxophone !">
+                <input type="checkbox" id="song-practice-mode">
+                <span class="slider round"></span>
+                <span class="switch-text">Mode défi doigté</span>
+              </label>
+            </div>
+
+          </div>
+
+          <!-- Description pédagogique et paroles du morceau -->
+          <div class="song-guide-box">
+            <h4>💡 Conseils pour ce morceau :</h4>
+            <p id="current-song-advice">
+              Ce morceau utilise les notes Sol, La, Si, Do et Ré. Pensez à garder les doigts arrondis juste au-dessus des perles sans vous crisper.
+            </p>
+          </div>
+
+        </div>
+
+        <!-- Panneau Doigté du Saxophone synchronisé avec le morceau -->
+        <div class="card song-sax-card">
+          <div class="song-sax-header">
+            <h3>Doigté pour : <span class="highlight-text" id="song-sax-note-label">Sol (Main gauche 1, 2, 3)</span></h3>
+            <p class="subtitle">Le schéma s'adapte en temps réel à chaque note du morceau</p>
+          </div>
+
+          <div class="saxophone-diagram-wrapper" id="song-sax-wrapper">
+            <!-- Diagramme SVG synchronisé avec le morceau -->
+          </div>
+
+          <div class="song-sax-footer" id="song-sax-explanation">
+            <p><strong>Doigté :</strong> Appuyez sur les touches 1, 2 et 3 de la main gauche.</p>
+          </div>
+        </div>
+
+      </div>
+
+    </section>
+
+    <!-- ======================================================== -->
+    <!-- ONGLET 3 : TABLE DES DOIGTÉS (Dictionnaire & Révision)   -->
+    <!-- ======================================================== -->
+    <section id="tab-fingering" class="tab-content" role="tabpanel" aria-labelledby="tab-btn-fingering">
+      
+      <div class="card fingering-hero-card">
+        <div class="fingering-hero-text">
+          <h2>Dictionnaire complet des doigtés du Saxophone Ténor</h2>
+          <p class="subtitle">Consultez, écoutez et comparez tous les doigtés de l'instrument, du Si♭ grave au Fa suraigu. Cliquez sur une note pour l'examiner en détail.</p>
+        </div>
+
+        <!-- Recherche et filtres de registre -->
+        <div class="fingering-filters-bar">
+          <div class="search-input-wrapper">
+            <span class="search-icon">🔍</span>
+            <input type="text" id="fingering-search" placeholder="Rechercher une note (ex : Fa#, Sib, Ré aigu...)" aria-label="Rechercher une note">
+          </div>
+
+          <div class="filter-pills-group" id="fingering-filter-pills">
+            <button class="filter-pill active" data-filter="all">Toutes (31)</button>
+            <button class="filter-pill" data-filter="beginner">⭐ Débutant facile</button>
+            <button class="filter-pill" data-filter="grave">Registre Grave</button>
+            <button class="filter-pill" data-filter="medium">Registre Médium</button>
+            <button class="filter-pill" data-filter="aigu">Registre Aigu</button>
+            <button class="filter-pill" data-filter="accidental">♯ / ♭ Altérations</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Grille des cartes de doigtés -->
+      <div class="fingering-grid" id="fingering-cards-grid">
+        <!-- Les 31 fiches de doigtés seront générées ici -->
+      </div>
+
+      <!-- Modal de détail de doigté -->
+      <div id="fingering-modal" class="modal-backdrop hidden" role="dialog" aria-modal="true" aria-labelledby="modal-note-title">
+        <div class="modal-dialog">
+          <div class="modal-header">
+            <div class="modal-title-group">
+              <span class="modal-badge" id="modal-note-badge">Registre Médium</span>
+              <h3 id="modal-note-title">Fa dièse aigu (Fa#5)</h3>
+            </div>
+            <button class="modal-close-btn" id="btn-close-modal" aria-label="Fermer la fenêtre">✕</button>
+          </div>
+          <div class="modal-body">
+            <div class="modal-staff-col">
+              <div class="modal-staff-box" id="modal-staff-container"></div>
+              <div class="modal-audio-row">
+                <button id="btn-modal-play" class="btn btn-primary btn-md">
+                  🔊 Écouter le son
+                </button>
+              </div>
+              <div class="modal-info-box">
+                <h4>Description du doigté :</h4>
+                <p id="modal-note-desc"></p>
+                <div id="modal-alt-fingerings" class="modal-alt-box hidden">
+                  <h5>Doigté alternatif disponible :</h5>
+                  <p id="modal-alt-desc"></p>
+                </div>
+              </div>
+            </div>
+            <div class="modal-sax-col">
+              <div class="saxophone-diagram-wrapper modal-sax-wrapper" id="modal-sax-wrapper"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- ======================================================== -->
+    <!-- ONGLET 4 : GUIDE DU DÉBUTANT (Conseils & Solfège)         -->
+    <!-- ======================================================== -->
+    <section id="tab-guide" class="tab-content" role="tabpanel" aria-labelledby="tab-btn-guide">
+      
+      <div class="guide-container">
+        
+        <div class="card guide-card">
+          <div class="guide-card-icon">🎷</div>
+          <h2>Le Saxophone Ténor : Qu'est-ce qu'un instrument en Si bémol (Si♭) ?</h2>
+          <p>
+            Le saxophone ténor est un <strong>instrument transpositeur en Si♭</strong>. 
+            Cela signifie que lorsque vous lisez et jouez un <strong>Do</strong> sur votre partition, 
+            le son réel qui sort de votre saxophone résonne comme un <strong>Si bémol</strong> sur un piano.
+          </p>
+          <div class="callout callout-info">
+            <p><strong>Rassurez-vous :</strong> Pour débuter, vous n'avez pas besoin de calculer la transposition ! Toutes les partitions pour saxophone (et celles de cette application) sont déjà écrites en « sons écrits » (clés de sol adaptées). Jouez simplement la note indiquée.</p>
+          </div>
+        </div>
+
+        <div class="guide-grid">
+          
+          <div class="card guide-card">
+            <div class="guide-card-icon">🎼</div>
+            <h3>Lire la clé de sol en 2 minutes</h3>
+            <p>La clé de sol s'enroule autour de la <strong>2ème ligne</strong> de la portée : c'est la ligne du <strong>Sol</strong>.</p>
+            <ul class="guide-list">
+              <li><strong>Les 5 lignes (du bas vers le haut) :</strong> Mi, Sol, Si, Ré, Fa.</li>
+              <li><strong>Les 4 interlignes (du bas vers le haut) :</strong> Fa, La, Do, Mi.</li>
+              <li><strong>La ligne du bas supplémentaire :</strong> Do grave (un petit trait horizontal traverse la note).</li>
+            </ul>
+          </div>
+
+          <div class="card guide-card">
+            <div class="guide-card-icon">🖐️</div>
+            <h3>Position des mains sur le saxophone</h3>
+            <ul class="guide-list">
+              <li><strong>Pouce gauche :</strong> Posé sur le repose-pouce supérieur. Il bascule pour appuyer sur la <em>clé d'octave</em>.</li>
+              <li><strong>Main gauche (en haut) :</strong> Index sur la touche 1, Majeur sur la touche 2, Annulaire sur la touche 3.</li>
+              <li><strong>Main droite (en bas) :</strong> Index sur la touche 4, Majeur sur la touche 5, Annulaire sur la touche 6.</li>
+              <li><strong>Pouce droit :</strong> Glissé sous le crochet inférieur pour soutenir l'instrument.</li>
+            </ul>
+          </div>
+
+          <div class="card guide-card">
+            <div class="guide-card-icon">💨</div>
+            <h3>L'embouchure et le premier son</h3>
+            <ul class="guide-list">
+              <li><strong>La lèvre inférieure :</strong> Légèrement repliée sur les dents du bas pour faire un petit coussin sous l'anche.</li>
+              <li><strong>Les dents du haut :</strong> Posées directement sur le bec, à environ 1 à 1,5 cm du bout.</li>
+              <li><strong>La respiration :</strong> Respirez avec le ventre (respiration abdominale) et envoyez un filet d'air chaud et constant comme pour faire de la buée sur une vitre.</li>
+            </ul>
+          </div>
+
+          <div class="card guide-card">
+            <div class="guide-card-icon">⭐</div>
+            <h3>L'ordre idéal des premières notes</h3>
+            <p>Commencez toujours dans cet ordre pour sortir un son facile et stable :</p>
+            <ol class="guide-list ordered">
+              <li><strong>Si (Touche 1)</strong> : Une seule touche fermée, le son le plus facile à sortir !</li>
+              <li><strong>La (Touches 1 + 2)</strong> : Deux doigts de la main gauche.</li>
+              <li><strong>Sol (Touches 1 + 2 + 3)</strong> : Les trois doigts de la main gauche.</li>
+              <li><strong>Do aigu (Touche 2 seule)</strong> : Le majeur gauche seul.</li>
+              <li><strong>Fa, Mi, Ré</strong> : En ajoutant progressivement la main droite.</li>
+            </ol>
+          </div>
+
+        </div>
+
+      </div>
+
+    </section>
+
+  </main>
+
+  <!-- Pied de page -->
+  <footer class="app-footer">
+    <div class="footer-container">
+      <p>SaxTénor Studio &bull; Application web d'apprentissage développée en HTML5, CSS3 et JavaScript vanilla.</p>
+      <p class="footer-sub">Conçue pour fonctionner 100% hors-ligne &bull; Prête pour GitHub Pages &bull; Sans publicité ni serveur</p>
+    </div>
+  </footer>
+
+  <!-- Script principal -->
+  <script src="script.js"></script>
+</body>
+</html>
